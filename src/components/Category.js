@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { Link, Route } from 'react-router-dom'
+import { Route } from 'react-router-dom'
 import PropTypes from 'prop-types';
 class Category extends Component {
   constructor(props) {
@@ -12,15 +12,17 @@ class Category extends Component {
   render() {
     const path = '/' + this.props.path;
     return (
-      <Route path={path} render={() => (<div>
-        <Link to='/'>To Home</Link>
-
-      </div>)}/>
+      <div>
+        <Route path={path} render={() => (<div>
+          <h2>{this.props.name}</h2>
+        </div>)}/> 
+      </div>
     );
   }
 }
 
-Category.PropTypes = {
+Category.propTypes = {
+  name: PropTypes.string.isRequired,
   path: PropTypes.string.isRequired
 }
 
