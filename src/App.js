@@ -3,35 +3,59 @@ import Category from './components/Category'
 import './App.css';
 import * as ReadableAPI from './utils/ReadableAPI'
 import { Link, Route } from 'react-router-dom'
+import { setCategories } from './actions/category.actions'
+import { connect } from 'react-redux';
+import PropTypes from 'prop-types';
+import { BrowserRouter } from 'react-router-dom';
 
 class App extends Component {
 
   state = {
-    categories: []
   }
 
   componentDidMount() {
     //TODO: convert to using store for this:
     ReadableAPI.getAllCategories()
-    .then(categories => this.setState({categories: categories}));
+    .then(categories => this.props.setCategories(categories));
   }
   render() {
-    let categories = this.state.categories;
+    const categories = this.props.categories;
     return (
-      <div className="App">
-        <Route exact path='/' render={() => (<h1>Home</h1>)}/>
-        <Link to='/'>To Home</Link>
-        <li>
+      <BrowserRouter>
+        <div className="App">
+          <Route exact path='/' render={() => (<h1>Home</h1>)}/>
+          <Link to='/'>To Home</Link>
+          <li>
+            {categories.map(category => {
+              return (<ul key={`ul-link-${category.path}`}><Link to={'/' + category.path}>To {category.path}</Link></ul>)
+            })}
+          </li>
           {categories.map(category => {
-            return (<ul><Link to={'/' + category.path}>To {category.path}</Link></ul>)
-          })}
-        </li>
-        {categories.map(category => {
-          return (<Category name={category.name} path={category.path}></Category>)
-        })}
-      </div>
+            return (<Category key={`category-${category.path}`} name={category.name} path={category.path}></Category>)
+          })}        
+        </div>
+      </BrowserRouter>
     );
   }
 }
 //<Link to='/testCategory'>To test category</Link>
-export default App;
+
+
+App.propTypes = {
+  categories: PropTypes.array.isRequired,
+  setCategories: PropTypes.func.isRequired,
+}
+
+function mapStateToProps(state) {
+  return {
+    categories: state.categories.data,
+  }
+}
+
+function mapDispatchToProps(dispatch) {
+  return {
+    setCategories: (data) => dispatch(setCategories(data)),
+  }
+}
+
+export default connect(mapStateToProps, mapDispatchToProps)(App);
