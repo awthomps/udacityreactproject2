@@ -1,9 +1,11 @@
 import React, { Component } from 'react';
 import Category from './components/Category'
+import Posts from './components/Posts'
 import './App.css';
 import * as ReadableAPI from './utils/ReadableAPI'
 import { Link, Route } from 'react-router-dom'
 import { setCategories } from './actions/category.actions'
+import { setPosts } from './actions/post.actions'
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
 import { BrowserRouter } from 'react-router-dom';
@@ -14,22 +16,33 @@ class App extends Component {
   }
 
   componentDidMount() {
-    //TODO: convert to using store for this:
+
+    // Initialize store:
     ReadableAPI.getAllCategories()
     .then(categories => this.props.setCategories(categories));
+    ReadableAPI.getAllPosts()
+    .then(posts => this.props.setPosts(posts));
   }
   render() {
-    const categories = this.props.categories;
+    const {categories} = this.props;
     return (
       <BrowserRouter>
         <div className="App">
-          <Route exact path='/' render={() => (<h1>Home</h1>)}/>
-          <Link to='/'>To Home</Link>
+          {/* Home Page: */}
+          <Link to='/'><h1>Readable</h1></Link>
           <li>
             {categories.map(category => {
               return (<ul key={`ul-link-${category.path}`}><Link to={'/' + category.path}>To {category.path}</Link></ul>)
             })}
           </li>
+          <Route exact path='/' render={() => (
+            <div>
+              <h1> All </h1>
+              <Posts name='' path=''/>
+            </div>
+          )}/>
+
+          {/* Category Pages: */}
           {categories.map(category => {
             return (<Category key={`category-${category.path}`} name={category.name} path={category.path}></Category>)
           })}        
@@ -44,6 +57,7 @@ class App extends Component {
 App.propTypes = {
   categories: PropTypes.array.isRequired,
   setCategories: PropTypes.func.isRequired,
+  setPosts: PropTypes.func.isRequired,
 }
 
 function mapStateToProps(state) {
@@ -55,6 +69,7 @@ function mapStateToProps(state) {
 function mapDispatchToProps(dispatch) {
   return {
     setCategories: (data) => dispatch(setCategories(data)),
+    setPosts: (data) => dispatch(setPosts(data)),
   }
 }
 
