@@ -7,6 +7,7 @@ import {
 
 import {
   SET_POSTS,
+  VOTE_ON_POST,
 } from '../actions/post.actions'
 
 const initialCategoriesState = {
@@ -35,6 +36,20 @@ function posts (state = initialPostsState, action) {
       const { posts } = action;
       return {
         data: posts,
+      }
+    case VOTE_ON_POST:
+      const { post, isUpvote} = action;
+      let index = state.data.indexOf(post);
+      let newScore = post.voteScore + (isUpvote ? 1 : -1);
+      return {
+        data: [
+          ...state.data.slice(0, index),
+          {
+            ...state.data[index], voteScore: newScore
+          },
+          ...state.data.slice(index + 1)
+        ]
+          
       }
     default:
       return state;

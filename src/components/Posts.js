@@ -14,13 +14,13 @@ class Posts extends Component {
   render() {
     const { posts } = this.props;
     let sortedPosts = posts;
-    console.log(this.state.sortByTimestamp);
+    // console.log(this.state.sortByTimestamp);
     if(this.state.sortByTimestamp) {
       sortedPosts.sort(this.timestampSort);
-      console.log('time');
+      // console.log('time');
     } else {
       sortedPosts.sort(this.voteScoreSort);
-      console.log('vote');
+      // console.log('vote');
     }
     return (
       <div>

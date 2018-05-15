@@ -1,6 +1,8 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
+import * as ReadableAPI from '../utils/ReadableAPI'
+import { voteOnPost } from '../actions/post.actions'
 
 class PostOverview extends Component {
   constructor(props) {
@@ -15,20 +17,37 @@ class PostOverview extends Component {
     return (
       <div id={post.id}>
         <h3>{post.title}</h3>
-        <div>{post.author}</div>
+        <div>by <i>{post.author}</i></div>
         <div>Number of comments: {post.commentCount}</div>
         <div>Score: {post.voteScore}</div>
-        <button>/\</button>
-        <button>\/</button>
+        <button onClick={() => this.vote(true)}>/\</button>
+        <button onClick={() => this.vote(false)}>\/</button>
         <button>View Post</button>
         <button>Delete Post</button>
       </div>
+    );
+  }
+  //Either `"upVote"` or `"downVote"`.
+  vote = (isUpvote) => {
+    ReadableAPI.voteOnPost(this.props.post.id, isUpvote)
+    .then(updatedPost => {
+      if(updatedPost) {
+        this.props.voteOnPost(this.props.post, isUpvote);
+      } else {
+        window.alert(`Failed to ${(isUpvote ? 'upvote' : 'downvote')}`)
+      }
+    })
+    .catch(response => {
+        console.log(response);
+        window.alert(`Failed to ${(isUpvote ? 'upvote' : 'downvote')}`)
+      }
     );
   }
 }
 
 PostOverview.propTypes = {
   id: PropTypes.string.isRequired,
+  voteOnPost: PropTypes.func.isRequired,
 }
 
 function mapStateToProps(state, props) {
@@ -42,6 +61,7 @@ function mapStateToProps(state, props) {
 
 function mapDispatchToProps(dispatch) {
   return {
+    voteOnPost: (post, isUpvote) => dispatch(voteOnPost(post, isUpvote))
   }
 }
 
