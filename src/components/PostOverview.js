@@ -21,8 +21,8 @@ class PostOverview extends Component {
         <div>by <i>{post.author}</i></div>
         <div>Number of comments: {post.commentCount}</div>
         <div>Score: {post.voteScore}</div>
-        <button onClick={() => util.vote(post, true, this.props.voteOnPost)}>/\</button>
-        <button onClick={() => util.vote(post, false, this.props.voteOnPost)}>\/</button>
+        <button onClick={() => util.postVote(post, true, this.props.voteOnPost)}>/\</button>
+        <button onClick={() => util.postVote(post, false, this.props.voteOnPost)}>\/</button>
         <Link to={`/${post.category}/${post.id}`}><button>View Post</button></Link>
         <button>Delete Post</button>
       </div>

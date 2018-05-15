@@ -10,6 +10,11 @@ import {
   VOTE_ON_POST,
 } from '../actions/post.actions'
 
+import {
+  SET_COMMENTS_FOR_POST_ID,
+  VOTE_ON_COMMENT,
+} from '../actions/comment.actions'
+
 const initialCategoriesState = {
   data: [],
 }
@@ -56,7 +61,38 @@ function posts (state = initialPostsState, action) {
   }
 }
 
+const initialCommentsState = {
+  data: {},
+}
+
+function comments(state = initialCommentsState, action) {
+  switch(action.type) {
+    case SET_COMMENTS_FOR_POST_ID:
+      const { id, comments } = action;
+      return {
+        data: {...state.data, [id]: comments}
+      }
+    case VOTE_ON_COMMENT:
+      const {comment, isUpvote} = action;
+      const newScore = comment.voteScore + (isUpvote ? 1 : -1);
+      const index = state.data[comment.parentId].indexOf(comment);
+      return {
+        data: {...state.data,
+          [comment.parentId]: [
+            ...state.data[comment.parentId].slice(0, index),
+            {...comment, voteScore: newScore},
+            ...state.data[comment.parentId].slice(index + 1)
+          ]
+        }
+      }
+
+    default:
+      return state;
+  }
+}
+
 export default combineReducers({
   categories,
   posts,
+  comments,
 });

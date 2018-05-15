@@ -85,7 +85,7 @@ export const deletePost = (id) =>
   }).then(res => res.json())
 // | `GET /posts/:id/comments` | Get all the comments for a single post. | |
 export const getCommentsForPost = (id) =>
-  fetch(`${api}/posts/${id}/comments`, headers)
+  fetch(`${api}/posts/${id}/comments`, { headers })
   .then(res => res.json())
 // | `POST /comments` | Add a comment to a post. | **id** - Any unique ID. As with posts, UUID is probably the best here. <br> **timestamp** - [Timestamp] Get this however you want. <br> **body** - [String] <br> **author** - [String] <br> **parentId** - Should match a post id in the database. |
 export const postComment = (id, body, author, parentId) =>
