@@ -1,8 +1,9 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
-import * as ReadableAPI from '../utils/ReadableAPI'
 import { voteOnPost } from '../actions/post.actions'
+import { Link } from 'react-router-dom'
+import * as util from '../utils/util'
 
 class PostOverview extends Component {
   constructor(props) {
@@ -20,27 +21,11 @@ class PostOverview extends Component {
         <div>by <i>{post.author}</i></div>
         <div>Number of comments: {post.commentCount}</div>
         <div>Score: {post.voteScore}</div>
-        <button onClick={() => this.vote(true)}>/\</button>
-        <button onClick={() => this.vote(false)}>\/</button>
-        <button>View Post</button>
+        <button onClick={() => util.vote(post, true, this.props.voteOnPost)}>/\</button>
+        <button onClick={() => util.vote(post, false, this.props.voteOnPost)}>\/</button>
+        <Link to={`/${post.category}/${post.id}`}><button>View Post</button></Link>
         <button>Delete Post</button>
       </div>
-    );
-  }
-  //Either `"upVote"` or `"downVote"`.
-  vote = (isUpvote) => {
-    ReadableAPI.voteOnPost(this.props.post.id, isUpvote)
-    .then(updatedPost => {
-      if(updatedPost) {
-        this.props.voteOnPost(this.props.post, isUpvote);
-      } else {
-        window.alert(`Failed to ${(isUpvote ? 'upvote' : 'downvote')}`)
-      }
-    })
-    .catch(response => {
-        console.log(response);
-        window.alert(`Failed to ${(isUpvote ? 'upvote' : 'downvote')}`)
-      }
     );
   }
 }

@@ -9,6 +9,7 @@ import { setPosts } from './actions/post.actions'
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
 import { BrowserRouter } from 'react-router-dom';
+import PostDetail from './components/PostDetail';
 
 class App extends Component {
 
@@ -24,7 +25,7 @@ class App extends Component {
     .then(posts => this.props.setPosts(posts));
   }
   render() {
-    const {categories} = this.props;
+    const {categories, posts} = this.props;
     return (
       <BrowserRouter>
         <div className="App">
@@ -45,7 +46,15 @@ class App extends Component {
           {/* Category Pages: */}
           {categories.map(category => {
             return (<Category key={`category-${category.path}`} name={category.name} path={category.path}></Category>)
-          })}        
+          })}
+
+          {/* Post Pages: */}
+          {posts.map(post => {
+            return (
+              <PostDetail key={`post-detail-${post.category}`} id={post.id}/>
+            )
+          })}
+
         </div>
       </BrowserRouter>
     );
@@ -57,12 +66,12 @@ class App extends Component {
 App.propTypes = {
   categories: PropTypes.array.isRequired,
   setCategories: PropTypes.func.isRequired,
-  setPosts: PropTypes.func.isRequired,
-}
+  setPosts: PropTypes.func.isRequired,}
 
 function mapStateToProps(state) {
   return {
     categories: state.categories.data,
+    posts: state.posts.data,
   }
 }
 

@@ -16,7 +16,7 @@ class Category extends Component {
     const urlPath = '/' + path;
     return (
       <div>
-        <Route path={urlPath} render={() => (<div>
+        <Route exact path={urlPath} render={() => (<div>
           <h2>{this.props.name}</h2>
           <Posts name={name} path={path}/>
         </div>)}/> 
