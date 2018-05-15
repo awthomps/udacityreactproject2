@@ -23,14 +23,15 @@ class Posts extends Component {
       // console.log('vote');
     }
     return (
+
       <div>
-          <select onChange={this.setSortMethod}>
-            <option value='true' defaultValue>Sort By Date</option>
-            <option value='false'>Sort by Score</option>
-          </select>
-          {sortedPosts.map(post => {
-            return <PostOverview key={`post-${post.id}`} id={post.id}/>
-          })}
+        <select onChange={this.setSortMethod}>
+          <option value='true' defaultValue>Sort By Date</option>
+          <option value='false'>Sort by Score</option>
+        </select>
+        {sortedPosts.map(post => {
+          return <PostOverview key={`post-${post.id}`} id={post.id}/>
+        })}
       </div>
     );
   }
@@ -47,19 +48,18 @@ class Posts extends Component {
   // }
   
   voteScoreSort(postA, postB) {
-    console.log(postA.voteScore + ' ' + postB.voteScore);
+    //console.log(postA.voteScore + ' ' + postB.voteScore);
     return postA.voteScore - postB.voteScore;
   }
   
   timestampSort(postA, postB) {
-    console.log(postA.timestamp + ' ' + postB.timestamp);
+    //console.log(postA.timestamp + ' ' + postB.timestamp);
     return postA.timestamp - postB.timestamp;
   }
 }
 
 Posts.propTypes = {
   path: PropTypes.string.isRequired,
-  name: PropTypes.string.isRequired,
 }
 
 function mapStateToProps(state, props) {
@@ -67,7 +67,7 @@ function mapStateToProps(state, props) {
     posts: !props.path ?
       state.posts.data :
       state.posts.data.filter(datum => {
-        return datum.category === props.name
+        return datum.category === props.path
       }),
   }
 }

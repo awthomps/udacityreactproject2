@@ -3,13 +3,13 @@ import Category from './components/Category'
 import Posts from './components/Posts'
 import './App.css';
 import * as ReadableAPI from './utils/ReadableAPI'
-import { Link, Route } from 'react-router-dom'
+import { Switch, Link, Route } from 'react-router-dom'
 import { setCategories } from './actions/category.actions'
 import { setPosts } from './actions/post.actions'
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
 import { BrowserRouter } from 'react-router-dom';
-import PostDetail from './components/PostDetail';
+import PostDetail from './components/PostDetail'
 
 class App extends Component {
 
@@ -25,7 +25,7 @@ class App extends Component {
     .then(posts => this.props.setPosts(posts));
   }
   render() {
-    const {categories, posts} = this.props;
+    const {categories} = this.props;
     return (
       <BrowserRouter>
         <div className="App">
@@ -36,24 +36,19 @@ class App extends Component {
               return (<ul key={`ul-link-${category.path}`}><Link to={'/' + category.path}>To {category.path}</Link></ul>)
             })}
           </li>
-          <Route exact path='/' render={() => (
-            <div>
-              <h1> All </h1>
-              <Posts name='' path=''/>
-            </div>
-          )}/>
+          <Switch>
+            <Route exact path='/' render={() => (
+              <div>
+                <h1> All </h1>
+                <Posts name='' path=''/>
+              </div>
+            )}/>
 
-          {/* Category Pages: */}
-          {categories.map(category => {
-            return (<Category key={`category-${category.path}`} name={category.name} path={category.path}></Category>)
-          })}
-
-          {/* Post Pages: */}
-          {posts.map(post => {
-            return (
-              <PostDetail key={`post-detail-${post.category}`} id={post.id}/>
-            )
-          })}
+            {/* Post Pages: */}
+            <Route exact path={'/:category/:id'} component={PostDetail}/>
+            {/* Category Pages: */}
+            <Route exact path={'/:category'}component={Category}/>
+          </Switch>
 
         </div>
       </BrowserRouter>

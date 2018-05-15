@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
-import { Route } from 'react-router-dom'
 import PropTypes from 'prop-types';
 import Posts from './Posts'
+import { connect } from 'react-redux';
 
 class Category extends Component {
   constructor(props) {
@@ -12,22 +12,27 @@ class Category extends Component {
   }
 
   render() {
-    const {path, name} = this.props;
-    const urlPath = '/' + path;
+    const {name, path} = this.props.category;
     return (
       <div>
-        <Route exact path={urlPath} render={() => (<div>
-          <h2>{this.props.name}</h2>
-          <Posts name={name} path={path}/>
-        </div>)}/> 
+        <h2>{path}</h2>
+        {name && path && <Posts name={name} path={path}/>}
       </div>
     );
   }
 }
 
 Category.propTypes = {
-  name: PropTypes.string.isRequired,
-  path: PropTypes.string.isRequired
+  category: PropTypes.object,
 }
 
-export default Category;
+function mapStateToProps(state, props) {
+  let tempCategories = state.categories.data.filter(datum => {
+    return datum.path === props.match.params.category
+  });
+  return {
+    category: tempCategories.length === 1 ? tempCategories[0] : {},
+  }
+}
+
+export default connect(mapStateToProps)(Category);
