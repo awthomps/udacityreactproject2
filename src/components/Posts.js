@@ -8,6 +8,7 @@ class Posts extends Component {
     super(props);
     this.state = {
       sortByTimestamp: true,
+      sortAscending: true,
     }
   }
 
@@ -16,10 +17,10 @@ class Posts extends Component {
     let sortedPosts = posts;
     // console.log(this.state.sortByTimestamp);
     if(this.state.sortByTimestamp) {
-      sortedPosts.sort(this.timestampSort);
+      sortedPosts.sort(this.directionalTimestampSort);
       // console.log('time');
     } else {
-      sortedPosts.sort(this.voteScoreSort);
+      sortedPosts.sort(this.directionalScoreSort);
       // console.log('vote');
     }
     return (
@@ -28,6 +29,10 @@ class Posts extends Component {
         <select onChange={this.setSortMethod}>
           <option value='true' defaultValue>Sort By Date</option>
           <option value='false'>Sort by Score</option>
+        </select>
+        <select onChange={this.setSortDirection}>
+          <option value='true' defaultValue>Ascending</option>
+          <option value='false'>Descending</option>
         </select>
         {sortedPosts.map(post => {
           return <PostOverview key={`post-${post.id}`} id={post.id}/>
@@ -38,6 +43,7 @@ class Posts extends Component {
   
 
   setSortMethod = (event) => {this.setState({sortByTimestamp: event.target.value === 'true'})}
+  setSortDirection = (event) => {this.setState({sortAscending: event.target.value === 'true'})}
 
   // sortMethod(postA, postB) {
   //   if(this.state.sortByTimestamp) {
@@ -47,13 +53,23 @@ class Posts extends Component {
   //   }
   // }
   
+  directionalScoreSort = (postA, postB) => {
+    return (this.state.sortAscending)
+    ? this.voteScoreSort(postA, postB)
+    : this.voteScoreSort(postB, postA);
+  }
+
   voteScoreSort(postA, postB) {
-    //console.log(postA.voteScore + ' ' + postB.voteScore);
     return postA.voteScore - postB.voteScore;
   }
   
+  directionalTimestampSort = (postA, postB) => {
+    return (this.state.sortAscending)
+    ? this.timestampSort(postA, postB)
+    : this.timestampSort(postB, postA);
+  }
+
   timestampSort(postA, postB) {
-    //console.log(postA.timestamp + ' ' + postB.timestamp);
     return postA.timestamp - postB.timestamp;
   }
 }
