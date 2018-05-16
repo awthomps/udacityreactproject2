@@ -2,6 +2,7 @@ export const SET_POSTS = 'SET_POSTS'
 export const VOTE_ON_POST = 'VOTE_ON_POST'
 export const ADD_NEW_POST = 'ADD_NEW_POST'
 export const EDIT_POST = 'EDIT_POST'
+export const DELETE_POST = 'DELETE_POST'
 
 
 export function setPosts(posts) {
@@ -31,5 +32,12 @@ export function editPost(oldPost, editedPost) {
     type: EDIT_POST,
     oldPost,
     editedPost,
+  }
+}
+
+export function deletePost(deletedPost) {
+  return {
+    type: DELETE_POST,
+    deletedPost,
   }
 }

@@ -4,6 +4,7 @@ import { connect } from 'react-redux';
 import {
   voteOnPost,
   editPost,
+  deletePost,
  } from '../actions/post.actions'
 import {
   setCommentsForPostId,
@@ -20,6 +21,7 @@ class PostDetail extends Component {
       showEditPostForm: false,
       editTitle: '',
       editBody: '',
+      postWasDeleted: false,
       comments: [],
       showNewCommentForm: false,
       newCommentAuthor: '',
@@ -38,64 +40,70 @@ class PostDetail extends Component {
   render() {
     const {post, comments} = this.props;
     return (
-      <div>
-        <hr/>
-        <h2>{post.title}</h2>
-        <p>{post.body}</p>
-        <div>Posted by <i>{post.author}</i></div>
-        <div>Comments: {post.commentCount}</div>
-        <div>Score: {post.voteScore}</div>
-        <button onClick={() => util.postVote(post, true, this.props.voteOnPost)}>/\</button>
-        <button onClick={() => util.postVote(post, false, this.props.voteOnPost)}>\/</button>
-        {!this.state.showEditPostForm
-        ? <button onClick={() => {
-          this.setState({
-            showEditPostForm: true,
-            editTitle: this.props.post.title,
-            editBody: this.props.post.body,
-          })}
-        }>Edit Post</button>
-        : <div className='inputform'>
-            <form onSubmit={this.handleEditPost}>
-              <fieldset>
-                <label>Title:</label><input type='text' onChange={this.handleEditTitleChange} defaultValue={post.title}/>
-                <label>Body:</label><br></br><textarea type='text' onChange={this.handleEditBodyChange} defaultValue={post.body}/>
-                <input type='submit' value='Submit'/><button onClick={() => {this.setState({ showEditPostForm: false })}}>Cancel</button>
-              </fieldset>
-            </form>
-          </div>
-        }
-        <button>Delete Post</button>
-        {!this.state.showNewCommentForm
-        ? <button onClick={() => {this.setState({ showNewCommentForm: true })}}>Add Comment</button>
-        : <div className='inputform'>
-            <form onSubmit={this.handleNewComment}>
-              <fieldset>
-                <label>Comment Author:</label><input type='text' onChange={this.handleCommentAuthorChange}/>
-                <label>Comment Body:</label><br></br><textarea type='text' onChange={this.handleCommentBodyChange}/>
-                <input type='submit' value='Submit'/><button onClick={() => {this.setState({ showNewCommentForm: false })}}>Cancel</button>
-              </fieldset>
-            </form>
-          </div>
-        }
+      (!this.state.postWasDeleted && post && post.id
+      ? <div>
+          <hr/>
+          <h2>{post.title}</h2>
+          <p>{post.body}</p>
+          <div>Posted by <i>{post.author}</i></div>
+          <div>Comments: {post.commentCount}</div>
+          <div>Score: {post.voteScore}</div>
+          <button onClick={() => util.postVote(post, true, this.props.voteOnPost)}>/\</button>
+          <button onClick={() => util.postVote(post, false, this.props.voteOnPost)}>\/</button>
+          {!this.state.showEditPostForm
+          ? <button onClick={() => {
+            this.setState({
+              showEditPostForm: true,
+              editTitle: this.props.post.title,
+              editBody: this.props.post.body,
+            })}
+          }>Edit Post</button>
+          : <div className='inputform'>
+              <form onSubmit={this.handleEditPost}>
+                <fieldset>
+                  <label>Title:</label><input type='text' onChange={this.handleEditTitleChange} defaultValue={post.title}/>
+                  <label>Body:</label><br></br><textarea type='text' onChange={this.handleEditBodyChange} defaultValue={post.body}/>
+                  <input type='submit' value='Submit'/><button onClick={() => {this.setState({ showEditPostForm: false })}}>Cancel</button>
+                </fieldset>
+              </form>
+            </div>
+          }
+          <button onClick={this.handleDeletePost}>Delete Post</button>
+          {!this.state.showNewCommentForm
+          ? <button onClick={() => {this.setState({ showNewCommentForm: true })}}>Add Comment</button>
+          : <div className='inputform'>
+              <form onSubmit={this.handleNewComment}>
+                <fieldset>
+                  <label>Comment Author:</label><input type='text' onChange={this.handleCommentAuthorChange}/>
+                  <label>Comment Body:</label><br></br><textarea type='text' onChange={this.handleCommentBodyChange}/>
+                  <input type='submit' value='Submit'/><button onClick={() => {this.setState({ showNewCommentForm: false })}}>Cancel</button>
+                </fieldset>
+              </form>
+            </div>
+          }
 
-        {/* Comments */}
-        {comments ? 
-        <div>
-          {comments.map(comment => {
-            return (
-              <Comment
-                key={'comment-'+comment.id+'-parent-'+comment.parentId}
-                id={comment.id}
-                parentId={comment.parentId}
-              />
-            );
-          })}
+          {/* Comments */}
+          {comments ? 
+          <div>
+            {comments.map(comment => {
+              return (
+                <Comment
+                  key={'comment-'+comment.id+'-parent-'+comment.parentId}
+                  id={comment.id}
+                  parentId={comment.parentId}
+                />
+              );
+            })}
+          </div>
+          :
+          <div> No Comments </div>}
+
         </div>
-        :
-        <div> No Comments </div>}
-
-      </div>
+      : (this.state.postWasDeleted
+        ? <div>Post deleted.</div> 
+        : <div>Error 404: Post does not exist.</div>
+        )
+      )
     );
   }
 
@@ -130,6 +138,20 @@ class PostDetail extends Component {
         this.props.editPost(this.props.post, editedPost);
         alert('Succesfully editted!')
         this.setState({showEditPostForm: false})
+      });
+    }
+  }
+
+  handleDeletePost = (event) => {
+    if(window.confirm(
+      "Are you sure you would like to delete post titled: "
+      + this.props.post.title + '?'
+    )) {
+      ReadableAPI.deletePost(this.props.post.id)
+      .then((data) => {
+        this.props.deletePost(this.props.post);
+        alert('Post successfully deleted!');
+        this.setState({postWasDeleted: true});
       });
     }
   }
@@ -185,6 +207,7 @@ function mapDispatchToProps(dispatch) {
   return {
     editPost: (oldPost, editedPost) => dispatch(editPost(oldPost, editedPost)),
     voteOnPost: (post, isUpvote) => dispatch(voteOnPost(post, isUpvote)),
+    deletePost: (post) => dispatch(deletePost(post)),
     setCommentsForPostId: (id, comments) => dispatch(setCommentsForPostId(id, comments)),
     postComment: (post, comment) => dispatch(postComment(post, comment)),
   }

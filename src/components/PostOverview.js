@@ -1,14 +1,16 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
-import { voteOnPost } from '../actions/post.actions'
+import { voteOnPost, deletePost } from '../actions/post.actions'
 import { Link } from 'react-router-dom'
 import * as util from '../utils/util'
+import * as ReadableAPI from '../utils/ReadableAPI'
 
 class PostOverview extends Component {
   constructor(props) {
     super(props);
     this.state = {
+      showDeletedPostView: false,
 
     }
   }
@@ -25,9 +27,22 @@ class PostOverview extends Component {
         <button onClick={() => util.postVote(post, true, this.props.voteOnPost)}>/\</button>
         <button onClick={() => util.postVote(post, false, this.props.voteOnPost)}>\/</button>
         <Link to={`/${post.category}/${post.id}`}><button>View Post</button></Link>
-        <button>Delete Post</button>
+        <button onClick={this.handleDeletePost}>Delete Post</button>
       </div>
     );
+  }
+
+  handleDeletePost = (event) => {
+    if(window.confirm(
+      "Are you sure you would like to delete post titled: "
+      + this.props.post.title + '?'
+    )) {
+      ReadableAPI.deletePost(this.props.post.id)
+      .then((data) => {
+        this.props.deletePost(this.props.post);
+        alert('Post successfully deleted!')
+      });
+    }
   }
 }
 
@@ -47,7 +62,8 @@ function mapStateToProps(state, props) {
 
 function mapDispatchToProps(dispatch) {
   return {
-    voteOnPost: (post, isUpvote) => dispatch(voteOnPost(post, isUpvote))
+    voteOnPost: (post, isUpvote) => dispatch(voteOnPost(post, isUpvote)),
+    deletePost: (post) => dispatch(deletePost(post)),
   }
 }
 

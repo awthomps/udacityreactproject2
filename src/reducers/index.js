@@ -10,6 +10,7 @@ import {
   VOTE_ON_POST,
   ADD_NEW_POST,
   EDIT_POST,
+  DELETE_POST,
 } from '../actions/post.actions'
 
 import {
@@ -91,13 +92,22 @@ function posts (state = initialPostsState, action) {
           ...state.data.slice(editedPostIndex + 1)
         ]
       }
+    case DELETE_POST:
+      const { deletedPost } = action;
+      const deletedPostIndex = state.data.indexOf(deletedPost);
+      return {
+        data: [
+          ...state.data.slice(0, deletedPostIndex),
+          ...state.data.slice(deletedPostIndex + 1)
+        ]
+      }
     default:
       return state;
   }
 }
 
 const initialCommentsState = {
-  data: {},
+  data: {}
 }
 
 function comments(state = initialCommentsState, action) {
