@@ -1,7 +1,10 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
-import { voteOnPost } from '../actions/post.actions'
+import {
+  voteOnPost,
+  editPost,
+ } from '../actions/post.actions'
 import {
   setCommentsForPostId,
   voteOnComment,
@@ -14,6 +17,9 @@ class PostDetail extends Component {
   constructor(props) {
     super(props);
     this.state = {
+      showEditPostForm: false,
+      editTitle: '',
+      editBody: '',
       comments: [],
       showNewCommentForm: false,
       newCommentAuthor: '',
@@ -21,10 +27,12 @@ class PostDetail extends Component {
     }
   }
 
-  component
   componentWillMount() {
     ReadableAPI.getCommentsForPost(this.props.id)
     .then(comments => this.props.setCommentsForPostId(this.props.id, comments));
+    this.setState({
+      
+    });
   }
 
   render() {
@@ -39,6 +47,24 @@ class PostDetail extends Component {
         <div>Score: {post.voteScore}</div>
         <button onClick={() => util.postVote(post, true, this.props.voteOnPost)}>/\</button>
         <button onClick={() => util.postVote(post, false, this.props.voteOnPost)}>\/</button>
+        {!this.state.showEditPostForm
+        ? <button onClick={() => {
+          this.setState({
+            showEditPostForm: true,
+            editTitle: this.props.post.title,
+            editBody: this.props.post.body,
+          })}
+        }>Edit Post</button>
+        : <div className='inputform'>
+            <form onSubmit={this.handleEditPost}>
+              <fieldset>
+                <label>Title:</label><input type='text' onChange={this.handleEditTitleChange} defaultValue={post.title}/>
+                <label>Body:</label><br></br><textarea type='text' onChange={this.handleEditBodyChange} defaultValue={post.body}/>
+                <input type='submit' value='Submit'/><button onClick={() => {this.setState({ showEditPostForm: false })}}>Cancel</button>
+              </fieldset>
+            </form>
+          </div>
+        }
         <button>Delete Post</button>
         {!this.state.showNewCommentForm
         ? <button onClick={() => {this.setState({ showNewCommentForm: true })}}>Add Comment</button>
@@ -76,6 +102,41 @@ class PostDetail extends Component {
 
       </div>
     );
+  }
+
+  handleEditTitleChange = (event) => {
+    this.setState({editTitle: event.target.value});
+  }
+  handleEditBodyChange = (event) => {
+    this.setState({editBody: event.target.value});
+  }
+
+  handleEditPost = (event) => {
+    event.preventDefault();
+    // Do some validation:
+    let {editTitle, editBody} = this.state;
+    const {id} = this.props.post;
+    if(!editTitle) {
+      alert('Title is empty or invalid. Please specify a value.');
+    } else if(!editBody) {
+      alert('Body is empty or invalid, Please specify a value.');
+    } else if(!id) {
+      alert('Problem getting id for post edit.');
+    } else if(
+      editTitle === this.props.post.title &&
+      editBody === this.props.post.body &&
+      !window.confirm("Body and Title are unchanged. Are you sure you want to edit?")
+    ) {
+      // Do Nothing
+    } else {
+      // Should be ok:
+      ReadableAPI.editPost(id, editTitle, editBody)
+      .then((editedPost) => {
+        this.props.editPost(this.props.post, editedPost);
+        alert('Succesfully editted!')
+        this.setState({showEditPostForm: false})
+      });
+    }
   }
 
   handleCommentAuthorChange = (event) => {
@@ -127,6 +188,7 @@ function mapStateToProps(state, props) {
 
 function mapDispatchToProps(dispatch) {
   return {
+    editPost: (oldPost, editedPost) => dispatch(editPost(oldPost, editedPost)),
     voteOnPost: (post, isUpvote) => dispatch(voteOnPost(post, isUpvote)),
     voteOnComment: (comment, isUpvote) => dispatch(voteOnComment(comment, isUpvote)),
     setCommentsForPostId: (id, comments) => dispatch(setCommentsForPostId(id, comments)),

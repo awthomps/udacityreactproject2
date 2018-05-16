@@ -9,6 +9,7 @@ import {
   SET_POSTS,
   VOTE_ON_POST,
   ADD_NEW_POST,
+  EDIT_POST,
 } from '../actions/post.actions'
 
 import {
@@ -67,9 +68,9 @@ function posts (state = initialPostsState, action) {
       }
 
     case POST_COMMENT:
-    const { targetPost } = action;
-    let addCommentIndex = state.data.indexOf(targetPost);
-    let addedCommentCount = state.data[addCommentIndex].commentCount + 1;
+      const { targetPost } = action;
+      const addCommentIndex = state.data.indexOf(targetPost);
+      const addedCommentCount = state.data[addCommentIndex].commentCount + 1;
       return {
         data: [
           ...state.data.slice(0, addCommentIndex),
@@ -77,6 +78,16 @@ function posts (state = initialPostsState, action) {
             ...state.data[addCommentIndex], commentCount: addedCommentCount
           },
           ...state.data.slice(addCommentIndex + 1)
+        ]
+      }
+    case EDIT_POST:
+      const { oldPost, editedPost } = action;
+      const editedPostIndex = state.data.indexOf(oldPost);
+      return {
+        data: [
+          ...state.data.slice(0, editedPostIndex),
+          {...editedPost},
+          ...state.data.slice(editedPostIndex + 1)
         ]
       }
     default:
