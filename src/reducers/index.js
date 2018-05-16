@@ -176,7 +176,7 @@ function comments(state = initialCommentsState, action) {
       return {
         data: {
           ...state.data,
-          [deletedPost.id]: comments
+          [deletedPost.id]: {}
         }
       }
     

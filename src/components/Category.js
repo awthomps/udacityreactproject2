@@ -71,6 +71,7 @@ class Category extends Component {
       .then((newPost) => {
         this.props.addNewPost(newPost);
         alert('Succesfully posted!')
+        this.setState({ showNewPostForm: false });
       });
     }
   }

@@ -182,6 +182,7 @@ class PostDetail extends Component {
       .then((newComment) => {
         this.props.postComment(this.props.post, newComment);
         alert('Succesfully commented!')
+        this.setState({ showNewCommentForm: false });
       });
     }
   } 
