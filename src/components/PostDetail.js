@@ -91,6 +91,7 @@ class PostDetail extends Component {
                   key={'comment-'+comment.id+'-parent-'+comment.parentId}
                   id={comment.id}
                   parentId={comment.parentId}
+                  post={post}
                 />
               );
             })}

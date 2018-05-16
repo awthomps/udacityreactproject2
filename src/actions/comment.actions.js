@@ -2,6 +2,7 @@ export const SET_COMMENTS_FOR_POST_ID = 'SET_COMMENTS_FOR_POST_ID'
 export const VOTE_ON_COMMENT = 'VOTE_ON_COMMENT'
 export const POST_COMMENT = 'POST_COMMENT'
 export const EDIT_COMMENT = 'EDIT_COMMENT'
+export const DELETE_COMMENT = 'DELETE_COMMENT'
 
 export function setCommentsForPostId(id, comments) {
   return {
@@ -32,5 +33,13 @@ export function editComment(oldComment, editedComment) {
     type: EDIT_COMMENT,
     oldComment,
     editedComment,
+  }
+}
+
+export function deleteComment(sourcePost, deletedComment) {
+  return {
+    type: DELETE_COMMENT,
+    sourcePost,
+    deletedComment,
   }
 }

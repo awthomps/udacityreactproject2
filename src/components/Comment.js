@@ -4,6 +4,7 @@ import { connect } from 'react-redux';
 import {
   voteOnComment,
   editComment,
+  deleteComment,
 } from '../actions/comment.actions'
 import * as util from '../utils/util'
 import * as ReadableAPI from '../utils/ReadableAPI'
@@ -45,7 +46,7 @@ class Comment extends Component {
             </form>
             </div>
         }
-        <button>Delete</button>
+        <button onClick={this.handleDeleteComment}>Delete</button>
       </div>
     )
   }
@@ -78,12 +79,23 @@ class Comment extends Component {
       });
     }
   }
+
+  handleDeleteComment = (event) => {
+    if(window.confirm("Are you sure you would like to delete this comment?")) {
+      ReadableAPI.deleteComment(this.props.id)
+      .then((data) => {
+        this.props.deleteComment(this.props.post, this.props.comment);
+        alert('Comment successfully deleted!');
+      });
+    }
+  }
 }
 
 Comment.propTypes = {
   comment: PropTypes.object.isRequired,
   id: PropTypes.string.isRequired,
   parentId: PropTypes.string.isRequired,
+  post: PropTypes.object.isRequired,
 }
 
 function mapStateToProps(state, props) {
@@ -99,6 +111,7 @@ function mapDispatchToProps(dispatch) {
   return {
     voteOnComment: (comment, isUpvote) => dispatch(voteOnComment(comment, isUpvote)),
     editComment: (oldComment, editedComment) => dispatch(editComment(oldComment, editedComment)),
+    deleteComment: (sourcePost, deletedComment) => dispatch(deleteComment(sourcePost, deletedComment)),
   }
 }
 

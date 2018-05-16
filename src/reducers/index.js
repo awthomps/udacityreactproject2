@@ -18,6 +18,7 @@ import {
   VOTE_ON_COMMENT,
   POST_COMMENT,
   EDIT_COMMENT,
+  DELETE_COMMENT,
 } from '../actions/comment.actions'
 
 const initialCategoriesState = {
@@ -101,6 +102,19 @@ function posts (state = initialPostsState, action) {
           ...state.data.slice(deletedPostIndex + 1)
         ]
       }
+      case DELETE_COMMENT:
+        const { sourcePost } = action;
+        const removeCommentIndex = state.data.indexOf(sourcePost);
+        const removeCommentCount = state.data[removeCommentIndex].commentCount - 1;
+        return {
+          data: [
+            ...state.data.slice(0, removeCommentIndex),
+            {
+              ...state.data[removeCommentIndex], commentCount: removeCommentCount
+            },
+            ...state.data.slice(removeCommentIndex + 1)
+          ]
+        }
     default:
       return state;
   }
@@ -153,6 +167,28 @@ function comments(state = initialCommentsState, action) {
             ...state.data[oldComment.parentId].slice(0, indexOfEditedComment),
             {...editedComment},
             ...state.data[oldComment.parentId].slice(indexOfEditedComment+1)
+          ]
+        }
+      }
+    
+    case DELETE_POST:
+      const { deletedPost } = action;
+      return {
+        data: {
+          ...state.data,
+          [deletedPost.id]: comments
+        }
+      }
+    
+    case DELETE_COMMENT:
+      const {deletedComment} = action;
+      const indexOfDeletedComment = state.data[deletedComment.parentId].indexOf(deletedComment);
+      return {
+        data: {
+          ...state.data,
+          [deletedComment.parentId]: [
+            ...state.data[deletedComment.parentId].slice(0, indexOfDeletedComment),
+            ...state.data[deletedComment.parentId].slice( + 1)
           ]
         }
       }
