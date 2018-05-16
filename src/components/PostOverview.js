@@ -17,6 +17,7 @@ class PostOverview extends Component {
     const post = this.props.post;
     return (
       <div id={post.id}>
+        <hr/>
         <h3>{post.title}</h3>
         <div>by <i>{post.author}</i></div>
         <div>Number of comments: {post.commentCount}</div>

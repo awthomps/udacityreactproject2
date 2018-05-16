@@ -24,7 +24,7 @@ class PostDetail extends Component {
     const {post, comments} = this.props;
     return (
       <div>
-        <hr></hr>
+        <hr/>
         <h2>{post.title}</h2>
         <p>{post.body}</p>
         <div>Posted by <i>{post.author}</i></div>
@@ -41,7 +41,7 @@ class PostDetail extends Component {
           {comments.map(comment => {
             return (
               <div key={'comment-'+comment.id+'-parent-'+comment.parentId}>
-                <hr></hr>
+                <hr/>
                 <div><i>{comment.author} says...</i></div>
                 <p>{comment.body}</p>
                 <div>Score: {comment.voteScore}</div>

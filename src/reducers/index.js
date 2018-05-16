@@ -8,6 +8,7 @@ import {
 import {
   SET_POSTS,
   VOTE_ON_POST,
+  ADD_NEW_POST,
 } from '../actions/post.actions'
 
 import {
@@ -43,7 +44,7 @@ function posts (state = initialPostsState, action) {
         data: posts,
       }
     case VOTE_ON_POST:
-      const { post, isUpvote} = action;
+      let { post, isUpvote} = action;
       let index = state.data.indexOf(post);
       let newScore = post.voteScore + (isUpvote ? 1 : -1);
       return {
@@ -55,6 +56,13 @@ function posts (state = initialPostsState, action) {
           ...state.data.slice(index + 1)
         ]
           
+      }
+    case ADD_NEW_POST:
+      return {
+        data: [
+          ...state.data,
+          action.post
+        ]
       }
     default:
       return state;
