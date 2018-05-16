@@ -7,11 +7,11 @@ import {
  } from '../actions/post.actions'
 import {
   setCommentsForPostId,
-  voteOnComment,
   postComment,
 } from '../actions/comment.actions'
 import * as util from '../utils/util'
 import * as ReadableAPI from '../utils/ReadableAPI'
+import Comment from './Comment'
 
 class PostDetail extends Component {
   constructor(props) {
@@ -84,16 +84,10 @@ class PostDetail extends Component {
         <div>
           {comments.map(comment => {
             return (
-              <div key={'comment-'+comment.id+'-parent-'+comment.parentId}>
-                <hr/>
-                <div><i>{comment.author} says...</i></div>
-                <p>{comment.body}</p>
-                <div>Score: {comment.voteScore}</div>
-                <button onClick={() => util.commentVote(comment, true, this.props.voteOnComment)}>/\</button>
-                <button onClick={() => util.commentVote(comment, false, this.props.voteOnComment)}>\/</button>
-                <button>Edit</button>
-                <button>Delete</button>
-              </div>
+              <Comment
+                key={'comment-'+comment.id+'-parent-'+comment.parentId}
+                comment={comment}
+              />
             );
           })}
         </div>
@@ -190,7 +184,6 @@ function mapDispatchToProps(dispatch) {
   return {
     editPost: (oldPost, editedPost) => dispatch(editPost(oldPost, editedPost)),
     voteOnPost: (post, isUpvote) => dispatch(voteOnPost(post, isUpvote)),
-    voteOnComment: (comment, isUpvote) => dispatch(voteOnComment(comment, isUpvote)),
     setCommentsForPostId: (id, comments) => dispatch(setCommentsForPostId(id, comments)),
     postComment: (post, comment) => dispatch(postComment(post, comment)),
   }
