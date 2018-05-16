@@ -16,6 +16,7 @@ import {
   SET_COMMENTS_FOR_POST_ID,
   VOTE_ON_COMMENT,
   POST_COMMENT,
+  EDIT_COMMENT,
 } from '../actions/comment.actions'
 
 const initialCategoriesState = {
@@ -121,7 +122,7 @@ function comments(state = initialCommentsState, action) {
       }
 
     case POST_COMMENT:
-    const { newComment } = action;
+      const { newComment } = action;
       return {
         data: {
           ...state.data,
@@ -132,6 +133,19 @@ function comments(state = initialCommentsState, action) {
         }
       }
 
+    case EDIT_COMMENT:
+      const { oldComment, editedComment } = action;
+      const indexOfEditedComment = state.data[oldComment.parentId].indexOf(oldComment)
+      return {
+        data: {
+          ...state.data,
+          [oldComment.parentId]: [
+            ...state.data[oldComment.parentId].slice(0, indexOfEditedComment),
+            {...editedComment},
+            ...state.data[oldComment.parentId].slice(indexOfEditedComment+1)
+          ]
+        }
+      }
     default:
       return state;
   }

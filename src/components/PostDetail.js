@@ -86,7 +86,8 @@ class PostDetail extends Component {
             return (
               <Comment
                 key={'comment-'+comment.id+'-parent-'+comment.parentId}
-                comment={comment}
+                id={comment.id}
+                parentId={comment.parentId}
               />
             );
           })}
@@ -108,7 +109,7 @@ class PostDetail extends Component {
   handleEditPost = (event) => {
     event.preventDefault();
     // Do some validation:
-    let {editTitle, editBody} = this.state;
+    let {editTitle, editBody } = this.state;
     const {id} = this.props.post;
     if(!editTitle) {
       alert('Title is empty or invalid. Please specify a value.');
