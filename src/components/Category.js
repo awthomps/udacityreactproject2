@@ -11,6 +11,7 @@ class Category extends Component {
     super(props);
     this.state = {
       showNewPostForm: false,
+      newPostCategory: '',
       newTitle: '',
       newAuthor: '',
       newBody: '',
@@ -21,13 +22,14 @@ class Category extends Component {
     const {name, path} = this.props.category;
     return (
       <div>
-        <h2>{path}</h2>
+        <h2>{name}</h2>
         {!this.state.showNewPostForm ?
           <button onClick={() => {this.setState({ showNewPostForm: true })}}>Add New Post</button>
         :
           <div className='inputform'>
             <form onSubmit={this.handleNewPost}>
               <fieldset>
+                {!path && this.getSelectItem()}
                 <label>Title:</label><input type='text' onChange={this.handleTitleChange}/>
                 <label>Author:</label><input type='text' onChange={this.handleAuthorChange}/>
                 <label>Body:</label><br></br><textarea type='text' onChange={this.handleBodyChange}/>
@@ -37,9 +39,33 @@ class Category extends Component {
           </div>
         }
         <br/>
-        {name && path && <Posts name={name} path={path}/>}
+        <Posts name={name} path={path}/>
       </div>
     );
+  }
+
+  getSelectItem() {
+    const defaultCategory = this.getDefaultCategory();
+    return (
+      <div>
+        <label>Category:</label><br/>
+        <select onChange={this.handleCategoryChange} defaultValue={defaultCategory}>
+          {this.props.categories.map(category => {return (
+            <option key={'new-post-category-option-'+category.path} value={category.path}>{category.name}</option>
+          )})}
+        </select>
+        <br/>
+      </div>
+    )
+  }
+
+  getDefaultCategory() {
+    return this.props.category.path ? this.props.category.path : this.props.categories[0].path;
+  }
+
+  handleCategoryChange = (event) => {
+    console.log(event.target.value);
+    this.setState({newPostCategory: event.target.value})
   }
 
   handleTitleChange = (event) => {
@@ -54,10 +80,14 @@ class Category extends Component {
 
   handleNewPost = (event) => {
     event.preventDefault();
+    
     // Do some validation:
-    const {newTitle, newAuthor, newBody} = this.state;
+    let newPostCategory = this.state.newPostCategory ? this.state.newPostCategory : this.getDefaultCategory();
+    const { newTitle, newAuthor, newBody} = this.state;
     const uuid = util.uuid(this.props.posts)
-    if(!newTitle) {
+    if(!newPostCategory) {
+      alert('Target category is empty or invalid. Something is wrong...');
+    } else if(!newTitle) {
       alert('Title is empty or invalid. Please specify a value.');
     } else if(!newAuthor) {
       alert('Author is empty or invalid. Please specify a value.');
@@ -67,7 +97,7 @@ class Category extends Component {
       alert('Problem generating a uuid to make a new post. Try a different browser.');
     } else {
       // Should be ok:
-      ReadableAPI.addNewPost(uuid, newTitle, newBody, newAuthor, this.props.category.path)
+      ReadableAPI.addNewPost(uuid, newTitle, newBody, newAuthor, newPostCategory)
       .then((newPost) => {
         this.props.addNewPost(newPost);
         alert('Succesfully posted!')
@@ -87,8 +117,9 @@ function mapStateToProps(state, props) {
     return datum.path === props.match.params.category
   });
   return {
-    category: tempCategories.length === 1 ? tempCategories[0] : {},
+    category: tempCategories.length === 1 ? tempCategories[0] : {name: 'All', path: ''},
     posts: state.posts.data,
+    categories: state.categories.data,
   }
 }
 

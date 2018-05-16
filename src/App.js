@@ -1,6 +1,5 @@
 import React, { Component } from 'react';
 import Category from './components/Category'
-import Posts from './components/Posts'
 import './App.css';
 import * as ReadableAPI from './utils/ReadableAPI'
 import { Switch, Link, Route } from 'react-router-dom'
@@ -37,13 +36,8 @@ class App extends Component {
             })}
           </li>
           <Switch>
-            <Route exact path='/' render={() => (
-              <div>
-                <h1> All </h1>
-                <Posts name='' path=''/>
-              </div>
-            )}/>
-
+            {/* Home Page */}
+            <Route exact path='/' component={Category}/>
             {/* Post Pages: */}
             <Route exact path={'/:category/:id'} component={PostDetail}/>
             {/* Category Pages: */}

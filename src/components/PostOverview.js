@@ -22,7 +22,7 @@ class PostOverview extends Component {
         <hr/>
         <h3>{post.title}</h3>
         <div>by <i>{post.author}</i></div>
-        <div>Number of comments: {post.commentCount}</div>
+        <div>Comments: {post.commentCount}</div>
         <div>Score: {post.voteScore}</div>
         <button onClick={() => util.postVote(post, true, this.props.voteOnPost)}>/\</button>
         <button onClick={() => util.postVote(post, false, this.props.voteOnPost)}>\/</button>
