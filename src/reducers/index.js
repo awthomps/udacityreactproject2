@@ -188,7 +188,7 @@ function comments(state = initialCommentsState, action) {
           ...state.data,
           [deletedComment.parentId]: [
             ...state.data[deletedComment.parentId].slice(0, indexOfDeletedComment),
-            ...state.data[deletedComment.parentId].slice( + 1)
+            ...state.data[deletedComment.parentId].slice(indexOfDeletedComment + 1)
           ]
         }
       }
