@@ -14,6 +14,7 @@ import {
 import {
   SET_COMMENTS_FOR_POST_ID,
   VOTE_ON_COMMENT,
+  POST_COMMENT,
 } from '../actions/comment.actions'
 
 const initialCategoriesState = {
@@ -64,6 +65,20 @@ function posts (state = initialPostsState, action) {
           action.post
         ]
       }
+
+    case POST_COMMENT:
+    const { targetPost } = action;
+    let addCommentIndex = state.data.indexOf(targetPost);
+    let addedCommentCount = state.data[addCommentIndex].commentCount + 1;
+      return {
+        data: [
+          ...state.data.slice(0, addCommentIndex),
+          {
+            ...state.data[addCommentIndex], commentCount: addedCommentCount
+          },
+          ...state.data.slice(addCommentIndex + 1)
+        ]
+      }
     default:
       return state;
   }
@@ -90,6 +105,18 @@ function comments(state = initialCommentsState, action) {
             ...state.data[comment.parentId].slice(0, index),
             {...comment, voteScore: newScore},
             ...state.data[comment.parentId].slice(index + 1)
+          ]
+        }
+      }
+
+    case POST_COMMENT:
+    const { newComment } = action;
+      return {
+        data: {
+          ...state.data,
+          [newComment.parentId]: [
+            ...state.data[newComment.parentId],
+            {...newComment}
           ]
         }
       }

@@ -3,7 +3,7 @@ body {
   padding: 0;
   font-family: sans-serif;
 }
-#inputform input{
+.inputform input{
   display: block;
 }
 

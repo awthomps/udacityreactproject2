@@ -25,7 +25,7 @@ class Category extends Component {
         {!this.state.showNewPostForm ?
           <button onClick={() => {this.setState({ showNewPostForm: true })}}>Add New Post</button>
         :
-          <div id='inputform'>
+          <div className='inputform'>
             <form onSubmit={this.handleNewPost}>
               <fieldset>
                 <label>Title:</label><input type='text' onChange={this.handleTitleChange}/>
